@@ -1,19 +1,16 @@
 package com.souptik.Bookstore_Application_Zynetic.controller;
 
-import com.souptik.Bookstore_Application_Zynetic.model.JwtRequest;
-import com.souptik.Bookstore_Application_Zynetic.model.JwtResponse;
+import com.souptik.Bookstore_Application_Zynetic.model.AuthRequest;
+import com.souptik.Bookstore_Application_Zynetic.model.Users;
+import com.souptik.Bookstore_Application_Zynetic.repository.UserRepository;
 import com.souptik.Bookstore_Application_Zynetic.security.JwtHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,55 +18,39 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserRepository userRepository;
 
     @Autowired
-    private AuthenticationManager manager;
-
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtHelper helper;
+    private AuthenticationManager authenticationManager;
 
-    private Logger logger = LoggerFactory.getLogger(AuthController.class);
+    @Autowired
+    private JwtHelper jwtHelper;
 
+    @PostMapping("/signup")
+    public ResponseEntity<String> register(@RequestBody Users user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setEnabled(true);
+        userRepository.save(user);
+        return ResponseEntity.ok("User Registered");
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+    public ResponseEntity<String> login(@RequestBody AuthRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        this.doAuthenticate(request.getEmail(), request.getPassword());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String token = jwtHelper.generateToken(userDetails);
 
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = this.helper.generateToken(userDetails);
-
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername()).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(token);
     }
 
-    private void doAuthenticate(String email, String password) {
-
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            manager.authenticate(authentication);
-
-
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
-        }
-
+    @GetMapping("/")
+    public String greet(){
+        return "Hello World";
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public String exceptionHandler() {
-        return "Credentials Invalid !!";
-    }
-
-
-    // testing
-    @RequestMapping("/hello")
-    String helloworldGreet(){
-        return "Hello world";
-    }
 }

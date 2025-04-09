@@ -22,5 +22,7 @@ public class Users {
 
     private String role; // e.g., USER, ADMIN
 
+    private boolean enabled;
+
     // Getters and setters
 }
