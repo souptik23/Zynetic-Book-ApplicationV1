@@ -17,8 +17,8 @@ public class JwtHelper {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-    // This should be a Base64 encoded string of a 256-bit key
-    private final String secret = "6yqN4f82PdL7R2hztAGLbM2Ryj4TpD1qUwFYmRM1eZlvfJ3E8VZK6McStg3b9aW5eGnZ6c7HjPByk8Tz1rX2qg==";
+    // This have to  be a Base64 encoded string of a 256-bit key
+    private final String secret = "6yqN4f82PdL7R2hztAGLbM2Ryj4TpD1qUwFYmRM1eZlvfJ3E8VZK6McStg3b9aW5eGnZ6c7HjPByk8Tz1rX2qg==";  // got this from online
 
     // Helper method to return the signing key
     private SecretKey getSigningKey() {
@@ -26,12 +26,12 @@ public class JwtHelper {
         return Keys.hmacShaKeyFor(decodedKey);
     }
 
-    // Retrieve username from JWT token
+    // Retrieve username  , frmo the jwt token we got
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    // Retrieve expiration date from JWT token
+    // Retrieve expiration date from JWT token , the expiration date also
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
@@ -44,10 +44,7 @@ public class JwtHelper {
     // Retrieve any information from token with secret key
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
     }
 
     // Check if the token has expired
@@ -63,8 +60,7 @@ public class JwtHelper {
     }
 
     // While creating the token -
-    // 1. Define claims
-    // 2. Sign with algorithm and secret
+
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -73,9 +69,10 @@ public class JwtHelper {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
-    }
 
-    // Validate token
+        }
+
+    // Validate the token
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

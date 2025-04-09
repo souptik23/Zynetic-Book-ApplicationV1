@@ -22,20 +22,16 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationEntryPoint point;
-
     @Autowired
     private JwtAuthenticationFilter filter;
-
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    // Password Encoder Bean
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Authentication Provider Bean
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -50,20 +46,21 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // Security Filter Chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/signup").permitAll()
-                        .requestMatchers("/test").authenticated()
+
+                        // the login and the signup link is publicly available
+                        .requestMatchers("/auth/login", "/auth/signup").permitAll().requestMatchers("/test").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

@@ -14,26 +14,14 @@ import java.util.List;
 @RequestMapping("/api/book")
 public class BookController {
 
-    @Autowired
     private final BookService bookService;
-
 
     @Autowired
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
-    @RequestMapping("/")
-    public String home() {
-        return "home Page";
-    }
-
-    @GetMapping("/book-register")
-    public String books(){
-        return "Book is getting";
-    }
-
-    // creating a new book in the database through the api call postman
+    // CREATE a new book
     @PostMapping("/book-register")
     public ResponseEntity<?> createBook(@RequestBody Book book) {
         try {
@@ -43,59 +31,63 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while saving the book");
+                    .body("Can't save the book. Recheck the input.");
         }
     }
 
-    // getting all the books out of the database by get method in the postman
+    // GET all books
     @GetMapping("/all-books")
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
 
-    //get a book by the respectieve id
+    // GET book by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<Book> getBookById(@PathVariable String id) {
         Book book = bookService.getBookById(id);
         return ResponseEntity.ok(book);
     }
 
-    // UPDATE Book by ID
+    // UPDATE book by ID
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+    public ResponseEntity<Book> updateBook(@PathVariable String id, @RequestBody Book updatedBook) {
         Book book = bookService.updateBook(id, updatedBook);
         return ResponseEntity.ok(book);
     }
 
-    // DELETE Book by ID
+    // DELETE book by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<String> deleteBook(@PathVariable String id) {
         bookService.deleteBookById(id);
-        return ResponseEntity.ok("Book with ID " + id + " has been deleted successfully.");
+        return ResponseEntity.ok("Book with ID " + id + " deleted successfully.");
     }
 
+    // FILTER: by author
     @GetMapping("/filter/author")
     public List<Book> getBooksByAuthor(@RequestParam String author) {
         return bookService.filterByAuthor(author);
     }
 
+    // FILTER: by category
     @GetMapping("/filter/category")
     public List<Book> getBooksByCategory(@RequestParam String category) {
         return bookService.filterByCategory(category);
     }
 
+    // FILTER: by rating
     @GetMapping("/filter/rating")
     public List<Book> getBooksByRating(@RequestParam double rating) {
         return bookService.filterByRating(rating);
     }
 
+    // SEARCH: name contains keyword
     @GetMapping("/search/name")
     public List<Book> searchBooksByName(@RequestParam String keyword) {
         return bookService.searchByNameContaining(keyword);
     }
 
-
-    @GetMapping("search/by-sorted-author")
+    // SEARCH: by author with sorting
+    @GetMapping("/search/by-sorted-author")
     public List<Book> getBooksByAuthorSorted(
             @RequestParam String author,
             @RequestParam(defaultValue = "rating") String sortBy,
@@ -104,15 +96,13 @@ public class BookController {
         return bookService.getBooksByAuthorSorted(author, sortBy, direction);
     }
 
+    // FILTER: all combined
     @GetMapping("/filter")
     public List<Book> filterBooksByAll(
             @RequestParam String author,
             @RequestParam String category,
             @RequestParam double rating
-    )
-    {
+    ) {
         return bookService.filterByAll(author, category, rating);
     }
-
-
 }

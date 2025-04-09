@@ -18,12 +18,9 @@ public class Users {
 
     private String password;
 
-    private String role; // e.g., USER, ADMIN
+    private String role; //USER, ADMIN
 
     private boolean enabled;
-
-
-    // Getters and setters
 
     public  String getId() {
         return id;

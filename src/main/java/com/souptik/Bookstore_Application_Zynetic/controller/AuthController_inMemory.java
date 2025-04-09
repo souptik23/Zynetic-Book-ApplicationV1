@@ -41,9 +41,7 @@ public class AuthController_inMemory {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = this.helper.generateToken(userDetails);
 
-        JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername()).build();
+        JwtResponse response = JwtResponse.builder().jwtToken(token).username(userDetails.getUsername()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -52,12 +50,10 @@ public class AuthController_inMemory {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
         try {
             manager.authenticate(authentication);
-
-
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException(" Invalid Username or Password  !!");
         }
-
+        catch (BadCredentialsException e) {
+            throw new BadCredentialsException(" Bad credentials , check the username and password :) !!");
+        }
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -66,7 +62,7 @@ public class AuthController_inMemory {
     }
 
 
-    // testing
+    // for testing only :)
     @RequestMapping("/hello")
     String helloworldGreet(){
         return "Hello world";

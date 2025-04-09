@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BookRepository extends MongoRepository<Book, Long> {
+public interface BookRepository extends MongoRepository<Book, String> {
 
     List<Book> findByAuthorIgnoreCase(String author);
     List<Book> findByCategoryIgnoreCase(String category);

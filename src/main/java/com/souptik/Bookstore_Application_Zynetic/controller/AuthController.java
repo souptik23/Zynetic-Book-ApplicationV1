@@ -29,6 +29,7 @@ public class AuthController {
     @Autowired
     private JwtHelper jwtHelper;
 
+    // the signup mapping
     @PostMapping("/signup")
     public ResponseEntity<String> register(@RequestBody Users user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -37,10 +38,10 @@ public class AuthController {
         return ResponseEntity.ok("User Registered");
     }
 
+    // here the user can login
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtHelper.generateToken(userDetails);
@@ -48,6 +49,7 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
+    // just for testing purpose , no implementation
     @GetMapping("/")
     public String greet(){
         return "Hello World";

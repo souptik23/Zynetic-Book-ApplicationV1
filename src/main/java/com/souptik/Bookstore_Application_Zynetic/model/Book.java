@@ -1,16 +1,16 @@
 package com.souptik.Bookstore_Application_Zynetic.model;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document
-@Table(name = "books")
+@Document(collection = "books") // optional, but good to specify
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,44 +19,32 @@ import java.time.LocalDateTime;
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Changed from int to Long for better compatibility
+    private String id; // MongoDB uses String _id (ObjectId), not Long by default
 
     @NotBlank(message = "Book name is required")
-    @Size(max = 100, message = "Book name cannot exceed 100 characters")
-    @Column(nullable = false, length = 100)
+    @Size(max = 100, message = "name can't exceed 100 char")
     private String name;
 
     @NotBlank(message = "Author name is required")
-    @Size(max = 50, message = "Author name cannot exceed 50 characters")
-    @Column(nullable = false, length = 50)
+    @Size(max = 50, message = "Author name can't exceed 50 char")
     private String author;
 
-    @NotBlank(message = "Price is required")
-    @Pattern(regexp = "^\\d+(\\.\\d{1,2})?$", message = "Invalid price format")
-    @Column(nullable = false, length = 10)
+    @NotBlank(message = "Price required")
+    @Pattern(regexp = "^\\d+(\\.\\d{1,2})?$", message = "bad price format")
     private String price;
 
     private double rating;
 
-    private String category; // <-- This field must exist
+    private String category;
 
-    @Column(unique = true)
-    private String isbn;  // Added ISBN field
+    private String isbn;
 
-    @CreationTimestamp
-    @Column(updatable = false, name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @Version
-    private Integer version;  // For optimistic locking
-
-
-    // Builder pattern will handle construction
-    // No need for explicit constructors when using @AllArgsConstructor and @NoArgsConstructor
+    private Integer version;
 }
-

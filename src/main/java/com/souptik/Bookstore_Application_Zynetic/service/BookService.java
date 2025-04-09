@@ -13,6 +13,7 @@ import java.util.List;
 public class BookService {
 
     @Autowired
+    // connected to the dao repository layer for the backend operation
     private BookRepository bookRepository;
 
     // create a new book or register a new book
@@ -29,15 +30,14 @@ public class BookService {
     }
 
     // get the book by id ::
-    public Book getBookById(Long id) {
+    public Book getBookById(String id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book with ID " + id + " not found"));
     }
 
     // update the books by their id
-    public Book updateBook(Long id, Book updatedBook) {
-        Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book with ID " + id + " not found"));
+    public Book updateBook(String id, Book updatedBook) {
+        Book existingBook = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book with ID " + id + " not found"));
 
         existingBook.setName(updatedBook.getName());
         existingBook.setAuthor(updatedBook.getAuthor());
@@ -48,24 +48,30 @@ public class BookService {
     }
 
     // DELETE Book by ID
-    public void deleteBookById(Long id) {
+    public void deleteBookById(String id) {
         if (!bookRepository.existsById(id)) {
             throw new RuntimeException("Book with ID " + id + " does not exist");
         }
         bookRepository.deleteById(id);
     }
 
+    // find by author
     public List<Book> filterByAuthor(String author) {
         return bookRepository.findByAuthorIgnoreCase(author);
     }
 
+
+    // by category
     public List<Book> filterByCategory(String category) {
         return bookRepository.findByCategoryIgnoreCase(category);
     }
 
+
+    // sort by  the rating
     public List<Book> filterByRating(double rating) {
         return bookRepository.findByRatingGreaterThanEqual(rating);
     }
+
 
     public List<Book> searchByNameContaining(String keyword) {
         return bookRepository.findByNameContainingIgnoreCase(keyword);
@@ -77,8 +83,13 @@ public class BookService {
         );
     }
 
+
+    // here we are applying multiple factors to sort the data , and some of the are also predefined
     public List<Book> getBooksByAuthorSorted(String author, String sortBy, String direction) {
+
+        // sorting mechanism methods :
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
         return bookRepository.findByAuthorContainingIgnoreCase(author, sort);
     }
 
