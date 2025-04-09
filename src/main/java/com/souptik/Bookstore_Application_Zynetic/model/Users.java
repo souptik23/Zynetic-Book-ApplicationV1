@@ -2,16 +2,16 @@ package com.souptik.Bookstore_Application_Zynetic.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(unique = true)
     private String username;
@@ -25,7 +25,7 @@ public class Users {
 
     // Getters and setters
 
-    public Long getId() {
+    public  String getId() {
         return id;
     }
 
@@ -45,7 +45,7 @@ public class Users {
         return enabled;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
