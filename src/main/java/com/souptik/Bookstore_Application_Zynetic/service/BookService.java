@@ -4,6 +4,7 @@ import com.souptik.Bookstore_Application_Zynetic.exception.BookAlreadyExistsExce
 import com.souptik.Bookstore_Application_Zynetic.model.Book;
 import com.souptik.Bookstore_Application_Zynetic.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,6 +75,11 @@ public class BookService {
         return bookRepository.findByAuthorIgnoreCaseAndCategoryIgnoreCaseAndRatingGreaterThanEqual(
                 author, category, rating
         );
+    }
+
+    public List<Book> getBooksByAuthorSorted(String author, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        return bookRepository.findByAuthorContainingIgnoreCase(author, sort);
     }
 
 

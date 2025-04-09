@@ -94,6 +94,16 @@ public class BookController {
         return bookService.searchByNameContaining(keyword);
     }
 
+
+    @GetMapping("search/by-sorted-author")
+    public List<Book> getBooksByAuthorSorted(
+            @RequestParam String author,
+            @RequestParam(defaultValue = "rating") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
+
+        return bookService.getBooksByAuthorSorted(author, sortBy, direction);
+    }
+
     @GetMapping("/filter")
     public List<Book> filterBooksByAll(
             @RequestParam String author,
