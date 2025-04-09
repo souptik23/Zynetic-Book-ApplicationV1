@@ -17,7 +17,9 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user1 = User.builder().username("souptik").password(passwordEncoder().encode("1234")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(user1);
+        UserDetails user2 = User.builder().username("karan").password(passwordEncoder().encode("5678")).roles("ADMIN").build();
+
+        return new InMemoryUserDetailsManager(user1 , user2);
     }
 
     @Bean

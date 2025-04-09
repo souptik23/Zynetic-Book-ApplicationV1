@@ -54,6 +54,28 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    public List<Book> filterByAuthor(String author) {
+        return bookRepository.findByAuthorIgnoreCase(author);
+    }
+
+    public List<Book> filterByCategory(String category) {
+        return bookRepository.findByCategoryIgnoreCase(category);
+    }
+
+    public List<Book> filterByRating(double rating) {
+        return bookRepository.findByRatingGreaterThanEqual(rating);
+    }
+
+    public List<Book> searchByNameContaining(String keyword) {
+        return bookRepository.findByNameContainingIgnoreCase(keyword);
+    }
+
+    public List<Book> filterByAll(String author, String category, double rating) {
+        return bookRepository.findByAuthorIgnoreCaseAndCategoryIgnoreCaseAndRatingGreaterThanEqual(
+                author, category, rating
+        );
+    }
+
 
 
 }

@@ -36,6 +36,10 @@ public class Book {
     @Column(nullable = false, length = 10)
     private String price;
 
+    private double rating;
+
+    private String category; // <-- This field must exist
+
     @Column(unique = true)
     private String isbn;  // Added ISBN field
 
@@ -49,6 +53,7 @@ public class Book {
 
     @Version
     private Integer version;  // For optimistic locking
+
 
     // Builder pattern will handle construction
     // No need for explicit constructors when using @AllArgsConstructor and @NoArgsConstructor

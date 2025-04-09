@@ -74,4 +74,35 @@ public class BookController {
         return ResponseEntity.ok("Book with ID " + id + " has been deleted successfully.");
     }
 
+    @GetMapping("/filter/author")
+    public List<Book> getBooksByAuthor(@RequestParam String author) {
+        return bookService.filterByAuthor(author);
+    }
+
+    @GetMapping("/filter/category")
+    public List<Book> getBooksByCategory(@RequestParam String category) {
+        return bookService.filterByCategory(category);
+    }
+
+    @GetMapping("/filter/rating")
+    public List<Book> getBooksByRating(@RequestParam double rating) {
+        return bookService.filterByRating(rating);
+    }
+
+    @GetMapping("/search/name")
+    public List<Book> searchBooksByName(@RequestParam String keyword) {
+        return bookService.searchByNameContaining(keyword);
+    }
+
+    @GetMapping("/filter")
+    public List<Book> filterBooksByAll(
+            @RequestParam String author,
+            @RequestParam String category,
+            @RequestParam double rating
+    )
+    {
+        return bookService.filterByAll(author, category, rating);
+    }
+
+
 }
