@@ -1,5 +1,7 @@
 [//]: # (Authentication APIs)
 
+[//]: # (Online Deployed : https://zynetic-book-applicationv1-1.onrender.com )
+
 [//]: # ()
 [//]: # (Register User: POST https://zynetic-book-applicationv1-1.onrender.com/auth/signup)
 
